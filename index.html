@@ -2,37 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Setowa Ticket</title>
-  <style>
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      font-family: sans-serif;
-      background-color: #f5f5f5;
-    }
-    button {
-      padding: 12px 24px;
-      font-size: 16px;
-      border: none;
-      background-color: #007aff;
-      color: white;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #005bb5;
-    }
-  </style>
+  <title>Token Hider</title>
+  <script>
+    window.onload = function () {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has("accessToken")) {
+        url.searchParams.delete("accessToken");
+        window.history.replaceState({}, document.title, url.pathname + url.search);
+        console.log("accessToken removed from URL");
+      }
+    };
+  </script>
 </head>
 <body>
-  <button onclick="openSetowa()">Ticket NS190800</button>
-
-  <script>
-    function openSetowa() {
-      window.location.href = 'setowa://ticket.details/?ticket_id=NS190800';
-    }
-  </script>
+  <h1>Chào mừng!</h1>
+  <p>Nếu bạn thấy trang này, accessToken trên URL đã bị xoá thành công 🎉</p>
 </body>
 </html>
