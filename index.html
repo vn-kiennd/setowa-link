@@ -1,21 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>Token Hider</title>
-  <script>
-    window.onload = function () {
-      const url = new URL(window.location.href);
-      if (url.searchParams.has("accessToken")) {
-        url.searchParams.delete("accessToken");
-        window.history.replaceState({}, document.title, url.pathname + url.search);
-        console.log("accessToken removed from URL");
-      }
-    };
-  </script>
+  <title>Open Setowa App</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    button {
+      font-size: 18px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-  <h1>Chào mừng!</h1>
-  <p>Nếu bạn thấy trang này, accessToken trên URL đã bị xoá thành công 🎉</p>
+
+  <button onclick="openSetowaApp()">Mở Setowa</button>
+
+  <script>
+    function openSetowaApp() {
+      window.location.href = 'setowa://home/?tab=sightseeingTab&precture_id=12&region_id=10';
+    }
+  </script>
+
 </body>
 </html>
