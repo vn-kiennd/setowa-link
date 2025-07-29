@@ -1,60 +1,42 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lấy vị trí của bạn</title>
+  <meta charset="UTF-8">
+  <title>Test Deep Links</title>
   <style>
     body {
-      font-family: sans-serif;
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: #f8f9fa;
       text-align: center;
-      padding: 20px;
     }
-    #map {
-      margin-top: 20px;
-      width: 100%;
-      height: 300px;
+    button {
+      display: block;
+      margin: 20px auto;
+      padding: 15px 30px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
     }
   </style>
 </head>
 <body>
-  <h1>📍 Vị trí hiện tại của bạn</h1>
-  <button onclick="getLocation()">Lấy vị trí</button>
 
-  <p id="status">Chưa lấy vị trí...</p>
-  <p id="coords"></p>
+  <h1>Test Deep Link Buttons</h1>
 
-  <div id="map"></div>
+  <button onclick="window.location.href='setowa://external.browser?url=https://google.com'">
+    Open External Browser
+  </button>
 
-  <script>
-    function getLocation() {
-      const status = document.getElementById("status");
-      const coords = document.getElementById("coords");
-      status.textContent = "Đang lấy vị trí...";
+  <button onclick="window.location.href='setowa://ticket.details?ticket_id=JK023700'">
+    Open Ticket Details
+  </button>
 
-      if (!navigator.geolocation) {
-        status.textContent = "Trình duyệt không hỗ trợ Geolocation.";
-        return;
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        function (position) {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-          status.textContent = "✅ Đã lấy vị trí!";
-          coords.textContent = `Latitude: ${lat}, Longitude: ${lon}`;
-
-          // Hiển thị bản đồ (OpenStreetMap)
-          const mapFrame = `<iframe width="100%" height="300" frameborder="0"
-            src="https://www.openstreetmap.org/export/embed.html?bbox=${lon - 0.01}%2C${lat - 0.01}%2C${lon + 0.01}%2C${lat + 0.01}&amp;layer=mapnik&amp;marker=${lat}%2C${lon}"
-            style="border: 1px solid black"></iframe>`;
-          document.getElementById("map").innerHTML = mapFrame;
-        },
-        function (error) {
-          status.textContent = "❌ Không thể lấy vị trí: " + error.message;
-        }
-      );
-    }
-  </script>
 </body>
 </html>
