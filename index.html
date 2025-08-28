@@ -15,6 +15,7 @@
     .row{display:flex;gap:12px;flex-wrap:wrap;margin:8px 0 18px}
     button{appearance:none;border:none;border-radius:12px;padding:12px 16px;font-weight:600;background:var(--brand);color:white;cursor:pointer}
     button.secondary{background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--text)}
+    input{flex:1;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.15);background:#0b1220;color:var(--text)}
     pre{background:#0b1220;border:1px solid rgba(255,255,255,.06);padding:12px;border-radius:12px;overflow:auto;margin:0 0 12px}
     .log{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#0b1220;border:1px dashed rgba(255,255,255,.15);padding:12px;border-radius:12px;min-height:48px;white-space:pre-wrap}
     .tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);color:var(--muted)}
@@ -31,8 +32,12 @@
     <pre id="data"><code>const shareData = {
   title: "Tabi Wester",
   text: "Welcome to the Tabi Wester travel site!",
-  url: "test.tabi-wester.westjr.co.jp",
+  url: "https://tabi-wester.westjr.co.jp",
 };</code></pre>
+
+    <div class="row">
+      <input id="urlInput" type="text" placeholder="Enter URL to share" value="https://tabi-wester.westjr.co.jp" />
+    </div>
 
     <div class="row">
       <button id="shareBtn">Share now</button>
@@ -45,11 +50,11 @@
   </div>
 
   <script>
-    // Your share payload
-    const shareData = {
+    // Initial share payload
+    let shareData = {
       title: "Tabi Wester",
-      text: "Welcome to the Tabi Wester travel site! https://app.tabi-wester.westjr.co.jp/",
-      url: "https://app.tabi-wester.westjr.co.jp/",
+      text: "Welcome to the Tabi Wester travel site!",
+      url: document.getElementById('urlInput').value,
     };
 
     const logEl = document.getElementById('log');
@@ -61,6 +66,11 @@
       el.textContent = text;
       return el;
     }
+
+    // Update shareData when URL input changes
+    document.getElementById('urlInput').addEventListener('input', (e) => {
+      shareData.url = e.target.value;
+    });
 
     // Capability summary
     (function renderSupport(){
