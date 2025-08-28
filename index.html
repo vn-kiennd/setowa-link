@@ -1,42 +1,109 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Test Deep Links</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Web Share API — Simple Demo</title>
+  <meta name="theme-color" content="#111827" />
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 40px;
-      background: #f8f9fa;
-      text-align: center;
-    }
-    button {
-      display: block;
-      margin: 20px auto;
-      padding: 15px 30px;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
-      background-color: #007bff;
-      color: white;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
+    :root { --bg:#0b1220; --card:#111827; --muted:#94a3b8; --text:#e5e7eb; --brand:#3b82f6; }
+    html,body{height:100%}
+    body{margin:0;font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(180deg,#0b1220,#0b1220 40%,#0e1729);color:var(--text);display:grid;place-items:center;padding:24px}
+    .card{width:min(680px,92vw);background:var(--card);border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.35);padding:24px 24px 18px;border:1px solid rgba(255,255,255,.06)}
+    h1{font-size:clamp(20px,2.8vw,28px);margin:0 0 10px}
+    p{color:var(--muted);margin:0 0 18px}
+    .row{display:flex;gap:12px;flex-wrap:wrap;margin:8px 0 18px}
+    button{appearance:none;border:none;border-radius:12px;padding:12px 16px;font-weight:600;background:var(--brand);color:white;cursor:pointer}
+    button.secondary{background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--text)}
+    pre{background:#0b1220;border:1px solid rgba(255,255,255,.06);padding:12px;border-radius:12px;overflow:auto;margin:0 0 12px}
+    .log{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#0b1220;border:1px dashed rgba(255,255,255,.15);padding:12px;border-radius:12px;min-height:48px;white-space:pre-wrap}
+    .tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);color:var(--muted)}
+    .ok{color:#10b981}
+    .warn{color:#f59e0b}
+    .bad{color:#ef4444}
   </style>
 </head>
 <body>
+  <div class="card">
+    <h1>Share this data with the Web Share API</h1>
+    <p>Works on supported browsers (usually mobile) over HTTPS and must be triggered by a user gesture.</p>
 
-  <h1>Test Deep Link Buttons</h1>
+    <pre id="data"><code>const shareData = {
+  title: "MDN",
+  text: "Learn web development on MDN! https://developer.mozilla.org",
+  url: "https://developer.mozilla.org",
+};</code></pre>
 
-  <button onclick="window.location.href='setowa://external.browser?url=https://google.com'">
-    Open External Browser
-  </button>
+    <div class="row">
+      <button id="shareBtn">Share now</button>
+      <button id="copyBtn" class="secondary">Copy link (fallback)</button>
+    </div>
 
-  <button onclick="window.location.href='setowa://ticket.details?ticket_id=JK023700'">
-    Open Ticket Details
-  </button>
+    <div class="row" id="supportRow"></div>
 
+    <div class="log" id="log" aria-live="polite"></div>
+  </div>
+
+  <script>
+    // Your share payload
+    const shareData = {
+      title: "MDN",
+      text: "Learn web development on MDN!",
+      url: "https://developer.mozilla.org",
+    };
+
+    const logEl = document.getElementById('log');
+    function log(msg){ logEl.textContent = msg; }
+
+    function tag(text, cls){
+      const el = document.createElement('span');
+      el.className = `tag ${cls||''}`;
+      el.textContent = text;
+      return el;
+    }
+
+    // Capability summary
+    (function renderSupport(){
+      const row = document.getElementById('supportRow');
+      const httpsOk = location.protocol === 'https:' || location.hostname === 'localhost';
+      row.appendChild(tag(httpsOk ? 'HTTPS ✓' : 'HTTPS required', httpsOk ? 'ok' : 'bad'));
+      const shareOk = !!navigator.share;
+      row.appendChild(tag(shareOk ? 'navigator.share ✓' : 'no navigator.share', shareOk ? 'ok' : 'bad'));
+      const canShareOk = typeof navigator.canShare === 'function' ? navigator.canShare(shareData) : shareOk;
+      row.appendChild(tag(canShareOk ? 'canShare ✓' : 'cannot share this payload', canShareOk ? 'ok' : 'warn'));
+    })();
+
+    // Share action
+    document.getElementById('shareBtn').addEventListener('click', async () => {
+      if (!navigator.share) {
+        log('This browser does not support the Web Share API. Try the fallback.');
+        return;
+      }
+      try {
+        await navigator.share(shareData);
+        log('Shared successfully.');
+      } catch (err) {
+        if (err && err.name === 'AbortError') {
+          log('Share dismissed by user.');
+        } else {
+          log('Share failed: ' + (err?.message || err));
+        }
+      }
+    });
+
+    // Fallback: copy URL to clipboard
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(shareData.url);
+        log('Copied URL to clipboard: ' + shareData.url);
+      } catch {
+        // Really old fallback
+        const tmp = document.createElement('textarea');
+        tmp.value = shareData.url; document.body.appendChild(tmp); tmp.select();
+        document.execCommand('copy'); document.body.removeChild(tmp);
+        log('Copied URL to clipboard (legacy).');
+      }
+    });
+  </script>
 </body>
 </html>
